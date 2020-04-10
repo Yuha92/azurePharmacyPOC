@@ -1,0 +1,10 @@
+{
+	"name": "keyvaultPOCconn",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://yuhaKeyVaultpoc.vault.azure.net/"
+		}
+	}
+}
