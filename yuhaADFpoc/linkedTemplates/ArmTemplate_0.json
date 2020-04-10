@@ -265,7 +265,7 @@
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/pharmacypoc/blobs//source/deaths",
+					"blobPathBeginsWith": "/pharmacypoc/blobs/source/deaths",
 					"blobPathEndsWith": ".csv",
 					"ignoreEmptyBlobs": true,
 					"scope": "[parameters('deathsTrigger_properties_typeProperties_scope')]",
