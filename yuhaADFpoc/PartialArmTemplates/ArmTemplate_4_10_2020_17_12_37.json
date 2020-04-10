@@ -1,0 +1,234 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "yuhaADFpoc"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/casesTrigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Stage1",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"FileName": "@triggerBody().fileName",
+							"FilePath": "@triggerBody().folderPath",
+							"ParamFilePath": "pharmacypoc/params",
+							"ParamFileName": "cases_params.csv"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pharmacypoc/blobs/source/cases",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Stage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/deathsTrigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Stage1",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"FileName": "@triggerBody().fileName",
+							"FilePath": "@triggerBody().folderPath",
+							"ParamFilePath": "pharmacypoc/params",
+							"ParamFileName": "deaths_params.csv"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pharmacypoc/blobs//source/deaths",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Stage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/keyvaultPOCconn')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "https://yuhaKeyVaultpoc.vault.azure.net/"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pharmacypocADLSconn')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "https://yuhaadlspoc.dfs.core.windows.net/",
+					"accountKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "keyvaultPOCconn",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "yuhaadlspocconnstring"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/keyvaultPOCconn')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Stage1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ParamsLookup",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "ParamsDataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"paramFilePath": {
+										"value": "@pipeline().parameters.ParamFilePath",
+										"type": "Expression"
+									},
+									"paramFileName": {
+										"value": "@pipeline().parameters.ParamFileName",
+										"type": "Expression"
+									}
+								}
+							},
+							"firstRowOnly": false
+						}
+					}
+				],
+				"parameters": {
+					"FileName": {
+						"type": "string"
+					},
+					"FilePath": {
+						"type": "string"
+					},
+					"ParamFilePath": {
+						"type": "string"
+					},
+					"ParamFileName": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ParamsDataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParamsDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "pharmacypocADLSconn",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"paramFilePath": {
+						"type": "string"
+					},
+					"paramFileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().paramFileName",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().paramFilePath",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/pharmacypocADLSconn')]"
+			]
+		}
+	]
+}

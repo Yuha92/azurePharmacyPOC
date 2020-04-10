@@ -1,0 +1,51 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "yuhaADFpoc"
+		},
+		"casesTrigger_properties_Stage1_parameters_FileName": {
+			"value": "@triggerBody().fileName"
+		},
+		"casesTrigger_properties_Stage1_parameters_FilePath": {
+			"value": "@triggerBody().folderPath"
+		},
+		"casesTrigger_properties_Stage1_parameters_ParamFilePath": {
+			"value": "pharmacypoc/params"
+		},
+		"casesTrigger_properties_Stage1_parameters_ParamFileName": {
+			"value": "cases_params.csv"
+		},
+		"casesTrigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
+		},
+		"deathsTrigger_properties_Stage1_parameters_FileName": {
+			"value": "@triggerBody().fileName"
+		},
+		"deathsTrigger_properties_Stage1_parameters_FilePath": {
+			"value": "@triggerBody().folderPath"
+		},
+		"deathsTrigger_properties_Stage1_parameters_ParamFilePath": {
+			"value": "pharmacypoc/params"
+		},
+		"deathsTrigger_properties_Stage1_parameters_ParamFileName": {
+			"value": "deaths_params.csv"
+		},
+		"deathsTrigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
+		},
+		"keyvaultPOCconn_properties_typeProperties_baseUrl": {
+			"value": "https://yuhaKeyVaultpoc.vault.azure.net/"
+		},
+		"pharmacypocADLSconn_properties_typeProperties_url": {
+			"value": "https://yuhaadlspoc.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
