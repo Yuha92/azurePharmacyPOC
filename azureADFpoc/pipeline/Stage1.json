@@ -80,6 +80,29 @@
 					"referenceName": "AzureFunctionConn",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "SanityCheck Error Mail",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "SanityCheck",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "EmailPusher",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"EmailTo": "yuhajobs@gmail.com"
+					}
+				}
 			}
 		],
 		"parameters": {
