@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "yuhaADFpoc"
 		},
+		"AzureFunctionConn_functionKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'functionKey' of 'AzureFunctionConn'"
+		},
 		"keyvaultPOCconn_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://yuhaKeyVaultpoc.vault.azure.net/"
@@ -69,6 +73,23 @@
 				"type": "AzureKeyVault",
 				"typeProperties": {
 					"baseUrl": "[parameters('keyvaultPOCconn_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureFunctionConn')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureFunction",
+				"typeProperties": {
+					"functionAppUrl": "https://yuhasanitycheck.azurewebsites.net",
+					"functionKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureFunctionConn_functionKey')]"
+					}
 				}
 			},
 			"dependsOn": []
@@ -147,7 +168,14 @@
 					{
 						"name": "ParamsLookup",
 						"type": "Lookup",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "SanityCheck",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -184,6 +212,37 @@
 							},
 							"firstRowOnly": false
 						}
+					},
+					{
+						"name": "SanityCheck",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": "yuhaSanityCheck",
+							"method": "GET",
+							"headers": {
+								"fileName": {
+									"value": "@pipeline().parameters.FileName",
+									"type": "Expression"
+								},
+								"filePath": {
+									"value": "@pipeline().parameters.ParamFilePath",
+									"type": "Expression"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureFunctionConn",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"parameters": {
@@ -203,7 +262,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ParamsDataset')]"
+				"[concat(variables('factoryId'), '/datasets/ParamsDataset')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureFunctionConn')]"
 			]
 		},
 		{

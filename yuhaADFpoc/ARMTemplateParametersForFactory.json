@@ -5,6 +5,15 @@
 		"factoryName": {
 			"value": "yuhaADFpoc"
 		},
+		"AzureFunctionConn_functionKey": {
+			"value": ""
+		},
+		"keyvaultPOCconn_properties_typeProperties_baseUrl": {
+			"value": "https://yuhaKeyVaultpoc.vault.azure.net/"
+		},
+		"pharmacypocADLSconn_properties_typeProperties_url": {
+			"value": "https://yuhaadlspoc.dfs.core.windows.net/"
+		},
 		"casesTrigger_properties_Stage1_parameters_FileName": {
 			"value": "@triggerBody().fileName"
 		},
@@ -34,12 +43,6 @@
 		},
 		"deathsTrigger_properties_typeProperties_scope": {
 			"value": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
-		},
-		"keyvaultPOCconn_properties_typeProperties_baseUrl": {
-			"value": "https://yuhaKeyVaultpoc.vault.azure.net/"
-		},
-		"pharmacypocADLSconn_properties_typeProperties_url": {
-			"value": "https://yuhaadlspoc.dfs.core.windows.net/"
 		}
 	}
 }

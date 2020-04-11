@@ -7,6 +7,18 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "yuhaADFpoc"
 		},
+		"AzureFunctionConn_functionKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'functionKey' of 'AzureFunctionConn'"
+		},
+		"keyvaultPOCconn_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://yuhaKeyVaultpoc.vault.azure.net/"
+		},
+		"pharmacypocADLSconn_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://yuhaadlspoc.dfs.core.windows.net/"
+		},
 		"casesTrigger_properties_Stage1_parameters_FileName": {
 			"type": "string",
 			"defaultValue": "@triggerBody().fileName"
@@ -46,20 +58,197 @@
 		"deathsTrigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
-		},
-		"keyvaultPOCconn_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://yuhaKeyVaultpoc.vault.azure.net/"
-		},
-		"pharmacypocADLSconn_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://yuhaadlspoc.dfs.core.windows.net/"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Stage1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ParamsLookup",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "SanityCheck",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "ParamsDataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"paramFilePath": {
+										"value": "@pipeline().parameters.ParamFilePath",
+										"type": "Expression"
+									},
+									"paramFileName": {
+										"value": "@pipeline().parameters.ParamFileName",
+										"type": "Expression"
+									}
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "SanityCheck",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": "yuhaSanityCheck",
+							"method": "GET",
+							"headers": {
+								"fileName": {
+									"value": "@pipeline().parameters.FileName",
+									"type": "Expression"
+								},
+								"filePath": {
+									"value": "@pipeline().parameters.ParamFilePath",
+									"type": "Expression"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureFunctionConn",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"parameters": {
+					"FileName": {
+						"type": "string"
+					},
+					"FilePath": {
+						"type": "string"
+					},
+					"ParamFilePath": {
+						"type": "string"
+					},
+					"ParamFileName": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ParamsDataset')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureFunctionConn')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParamsDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "pharmacypocADLSconn",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"paramFilePath": {
+						"type": "string"
+					},
+					"paramFileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().paramFileName",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().paramFilePath",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/pharmacypocADLSconn')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/keyvaultPOCconn')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('keyvaultPOCconn_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pharmacypocADLSconn')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('pharmacypocADLSconn_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "keyvaultPOCconn",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "yuhaadlspocconnstring"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/keyvaultPOCconn')]"
+			]
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/casesTrigger')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
@@ -133,150 +322,21 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/keyvaultPOCconn')]",
+			"name": "[concat(parameters('factoryName'), '/AzureFunctionConn')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"type": "AzureKeyVault",
+				"type": "AzureFunction",
 				"typeProperties": {
-					"baseUrl": "[parameters('keyvaultPOCconn_properties_typeProperties_baseUrl')]"
+					"functionAppUrl": "https://yuhasanitycheck.azurewebsites.net",
+					"functionKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureFunctionConn_functionKey')]"
+					}
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pharmacypocADLSconn')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('pharmacypocADLSconn_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "keyvaultPOCconn",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "yuhaadlspocconnstring"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/keyvaultPOCconn')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Stage1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ParamsLookup",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": false,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"dataset": {
-								"referenceName": "ParamsDataset",
-								"type": "DatasetReference",
-								"parameters": {
-									"paramFilePath": {
-										"value": "@pipeline().parameters.ParamFilePath",
-										"type": "Expression"
-									},
-									"paramFileName": {
-										"value": "@pipeline().parameters.ParamFileName",
-										"type": "Expression"
-									}
-								}
-							},
-							"firstRowOnly": false
-						}
-					}
-				],
-				"parameters": {
-					"FileName": {
-						"type": "string"
-					},
-					"FilePath": {
-						"type": "string"
-					},
-					"ParamFilePath": {
-						"type": "string"
-					},
-					"ParamFileName": {
-						"type": "string"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ParamsDataset')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ParamsDataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "pharmacypocADLSconn",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"paramFilePath": {
-						"type": "string"
-					},
-					"paramFileName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().paramFileName",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().paramFilePath",
-							"type": "Expression"
-						}
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/pharmacypocADLSconn')]"
-			]
 		}
 	]
 }
