@@ -80,6 +80,34 @@
 					"referenceName": "AzureFunctionConn",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "Sanity Error Mail",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "SanityCheck",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email Pusher",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"EmailTo": "yuhajobs@gmail.com",
+						"Subject": "ADF Pipeline Failed",
+						"ErrorMessage": {
+							"value": "@activity('SanityCheck').output",
+							"type": "Expression"
+						}
+					}
+				}
 			}
 		],
 		"parameters": {
