@@ -313,7 +313,7 @@
 								"EmailTo": "yuhajobs@gmail.com",
 								"Subject": "ADF Pipeline Failed",
 								"ErrorMessage": {
-									"value": "@activity('SanityCheck').output",
+									"value": "@activity('SanityCheck').Error.Message",
 									"type": "Expression"
 								}
 							}
