@@ -5,7 +5,14 @@
 			{
 				"name": "ParamsLookup",
 				"type": "Lookup",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "SanityCheck",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -41,6 +48,37 @@
 						}
 					},
 					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "SanityCheck",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": "yuhaSanityCheck",
+					"method": "GET",
+					"headers": {
+						"fileName": {
+							"value": "@pipeline().parameters.FileName",
+							"type": "Expression"
+						},
+						"filePath": {
+							"value": "@pipeline().parameters.ParamFilePath",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureFunctionConn",
+					"type": "LinkedServiceReference"
 				}
 			}
 		],
