@@ -34,7 +34,7 @@
 			"Subject": {
 				"type": "string"
 			},
-			"Message": {
+			"ErrorMessage": {
 				"type": "string"
 			}
 		},
