@@ -100,7 +100,12 @@
 					},
 					"waitOnCompletion": true,
 					"parameters": {
-						"EmailTo": "yuhajobs@gmail.com"
+						"EmailTo": "yuhajobs@gmail.com",
+						"Subject": "ADF Pipeline Failed",
+						"ErrorMessage": {
+							"value": "@activity('SanityCheck').Error.Message",
+							"type": "Expression"
+						}
 					}
 				}
 			}
