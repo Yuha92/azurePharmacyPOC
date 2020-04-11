@@ -1,0 +1,43 @@
+{
+	"name": "Email Pusher",
+	"properties": {
+		"activities": [
+			{
+				"name": "Send Mail",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-09.southeastasia.logic.azure.com:443/workflows/97ec2177ca3b49e39ad8cd1cfdf3c9cd/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AnvYfNw5jDJsCzFMJ4ICfVb4iOM_rxWH1QS8ufxkHjc",
+					"method": "POST",
+					"body": {
+						"DataFactoryName": "@{pipeline().DataFactory}",
+						"PipelineName": "@{pipeline().Pipeline}",
+						"Subject": "@{pipeline().parameters.Subject}",
+						"ErrorMessage": "@{pipeline().parameters.ErrorMessage}",
+						"EmailTo": "@pipeline().parameters.EmailTo"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"EmailTo": {
+				"type": "string"
+			},
+			"Subject": {
+				"type": "string"
+			},
+			"ErrorMessage": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}
