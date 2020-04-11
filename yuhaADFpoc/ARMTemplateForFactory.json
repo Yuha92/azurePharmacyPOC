@@ -131,7 +131,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"functionName": "yuhaSanityCheck",
+							"functionName": "BlobValidator",
 							"method": "GET",
 							"headers": {
 								"fileName": {
@@ -212,6 +212,23 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/pharmacypocADLSconn')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureFunctionConn')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureFunction",
+				"typeProperties": {
+					"functionAppUrl": "https://yuhasanitycheck.azurewebsites.net",
+					"functionKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureFunctionConn_functionKey')]"
+					}
+				}
+			},
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/keyvaultPOCconn')]",
@@ -320,23 +337,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/Stage1')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureFunctionConn')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureFunction",
-				"typeProperties": {
-					"functionAppUrl": "https://yuhasanitycheck.azurewebsites.net",
-					"functionKey": {
-						"type": "SecureString",
-						"value": "[parameters('AzureFunctionConn_functionKey')]"
-					}
-				}
-			},
-			"dependsOn": []
 		}
 	]
 }
