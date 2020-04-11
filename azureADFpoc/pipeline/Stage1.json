@@ -63,7 +63,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"functionName": "yuhaSanityCheck",
+					"functionName": "BlobValidator",
 					"method": "GET",
 					"headers": {
 						"fileName": {
