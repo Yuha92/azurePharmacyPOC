@@ -8,6 +8,9 @@
 		"AzureFunctionConn_functionKey": {
 			"value": ""
 		},
+		"HDIClusterconn_password": {
+			"value": ""
+		},
 		"keyvaultPOCconn_properties_typeProperties_baseUrl": {
 			"value": "https://yuhaKeyVaultpoc.vault.azure.net/"
 		},
@@ -43,6 +46,9 @@
 		},
 		"deathsTrigger_properties_typeProperties_scope": {
 			"value": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
+		},
+		"HDIClusterconn_properties_typeProperties_userName": {
+			"value": "admin"
 		},
 		"containerUri": {
 			"value": ""

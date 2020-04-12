@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'functionKey' of 'AzureFunctionConn'"
 		},
+		"HDIClusterconn_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'HDIClusterconn'"
+		},
 		"keyvaultPOCconn_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://yuhaKeyVaultpoc.vault.azure.net/"
@@ -59,6 +63,10 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
 		},
+		"HDIClusterconn_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -89,11 +97,17 @@
 					"AzureFunctionConn_functionKey": {
 						"value": "[parameters('AzureFunctionConn_functionKey')]"
 					},
+					"HDIClusterconn_password": {
+						"value": "[parameters('HDIClusterconn_password')]"
+					},
 					"keyvaultPOCconn_properties_typeProperties_baseUrl": {
 						"value": "[parameters('keyvaultPOCconn_properties_typeProperties_baseUrl')]"
 					},
 					"pharmacypocADLSconn_properties_typeProperties_url": {
 						"value": "[parameters('pharmacypocADLSconn_properties_typeProperties_url')]"
+					},
+					"HDIClusterconn_properties_typeProperties_userName": {
+						"value": "[parameters('HDIClusterconn_properties_typeProperties_userName')]"
 					},
 					"casesTrigger_properties_Stage1_parameters_FileName": {
 						"value": "[parameters('casesTrigger_properties_Stage1_parameters_FileName')]"
