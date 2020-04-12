@@ -108,6 +108,43 @@
 						}
 					}
 				}
+			},
+			{
+				"name": "Raw Hive loading",
+				"type": "HDInsightHive",
+				"dependsOn": [
+					{
+						"activity": "ParamsLookup",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"scriptPath": "pharmacypoc/scripts/raw_cases_hive.hql",
+					"defines": {
+						"srcfilelocation": {
+							"value": "@activity('ParamsLookup').output.value[0].hiveSourcePath",
+							"type": "Expression"
+						}
+					},
+					"scriptLinkedService": {
+						"referenceName": "pharmacypocADLSconn",
+						"type": "LinkedServiceReference"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "HDIClusterconn",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"parameters": {
