@@ -132,7 +132,7 @@
 					"scriptPath": "pharmacypoc/scripts/raw_cases_hive.hql",
 					"defines": {
 						"srcfilelocation": {
-							"value": "@activity('ParamsLookup').output.value[0].hiveSourcePath",
+							"value": "@concat(activity('ParamsLookup').output.value[0].hiveSourcePath,'/',pipeline().parameters.FileName)",
 							"type": "Expression"
 						}
 					},
