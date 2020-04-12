@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'HDIClusterconn'"
 		},
+		"HDIClusterconn_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
 		"keyvaultPOCconn_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://yuhaKeyVaultpoc.vault.azure.net/"
@@ -62,10 +66,6 @@
 		"deathsTrigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
-		},
-		"HDIClusterconn_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "admin"
 		}
 	},
 	"variables": {
@@ -255,7 +255,7 @@
 							"scriptPath": "pharmacypoc/scripts/raw_cases_hive.hql",
 							"defines": {
 								"srcfilelocation": {
-									"value": "@activity('ParamsLookup').output.value[0].hiveSourcePath",
+									"value": "@concat(activity('ParamsLookup').output.value[0].hiveSourcePath,'/',pipeline().parameters.FileName)",
 									"type": "Expression"
 								}
 							},
@@ -290,8 +290,8 @@
 				"[concat(variables('factoryId'), '/datasets/ParamsDataset')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureFunctionConn')]",
 				"[concat(variables('factoryId'), '/pipelines/Email Pusher')]",
-				"[concat(variables('factoryId'), '/linkedServices/HDIClusterconn')]",
-				"[concat(variables('factoryId'), '/linkedServices/pharmacypocADLSconn')]"
+				"[concat(variables('factoryId'), '/linkedServices/pharmacypocADLSconn')]",
+				"[concat(variables('factoryId'), '/linkedServices/HDIClusterconn')]"
 			]
 		},
 		{
@@ -352,6 +352,32 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/HDIClusterconn')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HDInsight",
+				"typeProperties": {
+					"clusterUri": "https://pradeephdinsight.azurehdinsight.net",
+					"userName": "[parameters('HDIClusterconn_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('HDIClusterconn_password')]"
+					},
+					"isEspEnabled": false,
+					"fileSystem": "clusterlogs",
+					"linkedServiceName": {
+						"referenceName": "pharmacypocADLSconn",
+						"type": "LinkedServiceReference"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/pharmacypocADLSconn')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/keyvaultPOCconn')]",
@@ -459,32 +485,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/Stage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/HDIClusterconn')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "HDInsight",
-				"typeProperties": {
-					"clusterUri": "https://pradeephdinsight.azurehdinsight.net",
-					"userName": "[parameters('HDIClusterconn_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('HDIClusterconn_password')]"
-					},
-					"isEspEnabled": false,
-					"fileSystem": "clusterlogs",
-					"linkedServiceName": {
-						"referenceName": "pharmacypocADLSconn",
-						"type": "LinkedServiceReference"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/pharmacypocADLSconn')]"
 			]
 		}
 	]

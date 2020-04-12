@@ -376,7 +376,7 @@
 							"scriptPath": "pharmacypoc/scripts/raw_cases_hive.hql",
 							"defines": {
 								"srcfilelocation": {
-									"value": "@activity('ParamsLookup').output.value[0].hiveSourcePath",
+									"value": "@concat(activity('ParamsLookup').output.value[0].hiveSourcePath,'/',pipeline().parameters.FileName)",
 									"type": "Expression"
 								}
 							},
@@ -411,8 +411,8 @@
 				"[concat(variables('factoryId'), '/datasets/ParamsDataset')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureFunctionConn')]",
 				"[concat(variables('factoryId'), '/pipelines/Email Pusher')]",
-				"[concat(variables('factoryId'), '/linkedServices/HDIClusterconn')]",
-				"[concat(variables('factoryId'), '/linkedServices/pharmacypocADLSconn')]"
+				"[concat(variables('factoryId'), '/linkedServices/pharmacypocADLSconn')]",
+				"[concat(variables('factoryId'), '/linkedServices/HDIClusterconn')]"
 			]
 		},
 		{

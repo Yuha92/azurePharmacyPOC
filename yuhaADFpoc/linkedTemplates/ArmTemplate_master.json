@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'HDIClusterconn'"
 		},
+		"HDIClusterconn_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
 		"keyvaultPOCconn_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://yuhaKeyVaultpoc.vault.azure.net/"
@@ -62,10 +66,6 @@
 		"deathsTrigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
-		},
-		"HDIClusterconn_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "admin"
 		},
 		"containerUri": {
 			"type": "string",
