@@ -30,9 +30,6 @@
 			},
 			"RawFileName": {
 				"type": "string"
-			},
-			"RawFilePath": {
-				"type": "string"
 			}
 		},
 		"annotations": []
