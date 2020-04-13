@@ -129,7 +129,10 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"scriptPath": "pharmacypoc/scripts/raw_cases_hive.hql",
+					"scriptPath": {
+						"value": "@activity('ParamsLookup').output.value[0].hiveLoc",
+						"type": "Expression"
+					},
 					"defines": {
 						"srcfilelocation": {
 							"value": "@concat(activity('ParamsLookup').output.value[0].hiveSourcePath,'/',pipeline().parameters.FileName)",
