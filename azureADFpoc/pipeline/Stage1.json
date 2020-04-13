@@ -134,6 +134,10 @@
 						"srcfilelocation": {
 							"value": "@concat(activity('ParamsLookup').output.value[0].hiveSourcePath,'/',pipeline().parameters.FileName)",
 							"type": "Expression"
+						},
+						"loaddate": {
+							"value": "@formatDateTime(utcnow(),'yyyy-MM-dd')",
+							"type": "Expression"
 						}
 					},
 					"scriptLinkedService": {
