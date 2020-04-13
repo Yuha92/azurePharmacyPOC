@@ -177,7 +177,7 @@
 							"type": "Expression"
 						},
 						"RawFileName": {
-							"value": "@concat(activity('Raw Hive loading').output.value[0].containername,'/',activity('Raw Hive loading').output.value[0].fullFilename)",
+							"value": "@concat(activity('SanityCheck').output.value[0].containername,'/',activity('SanityCheck').output.value[0].fullFilename)",
 							"type": "Expression"
 						}
 					}
