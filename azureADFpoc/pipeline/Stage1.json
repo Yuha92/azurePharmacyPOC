@@ -152,6 +152,36 @@
 					"referenceName": "HDIClusterconn",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "Trigger Creation",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Raw Hive loading",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "TriggerCreation",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"TriggerLoc": {
+							"value": "@activity('ParamsLookup').output.value[0].triggerLoc",
+							"type": "Expression"
+						},
+						"RawFileName": {
+							"value": "@concat(activity('Raw Hive loading').output.value[0].containername,'/',activity('Raw Hive loading').output.value[0].fullFilename)",
+							"type": "Expression"
+						}
+					}
+				}
 			}
 		],
 		"parameters": {
