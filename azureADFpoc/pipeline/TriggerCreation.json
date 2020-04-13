@@ -1,0 +1,40 @@
+{
+	"name": "TriggerCreation",
+	"properties": {
+		"activities": [
+			{
+				"name": "TriggerCreation",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-16.southeastasia.logic.azure.com:443/workflows/cfbc939699034cd583f0813392e21340/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eXPjXDn77yLzL6djv_LLVScsFHJo9GlwVM77-mBa-dc",
+					"method": "POST",
+					"body": {
+						"RawFileName": "@{pipeline().parameters.RawFileName}",
+						"TriggerLoc": "@pipeline().parameters.TriggerLoc"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"TriggerLoc": {
+				"type": "string"
+			},
+			"RawFileName": {
+				"type": "string"
+			},
+			"RawFilePath": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}
