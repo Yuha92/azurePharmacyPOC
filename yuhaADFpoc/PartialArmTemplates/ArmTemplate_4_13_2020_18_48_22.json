@@ -1,0 +1,192 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "yuhaADFpoc"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Stage1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ParamsLookup",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "SanityCheck",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "ParamsDataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"paramFilePath": {
+										"value": "@pipeline().parameters.ParamFilePath",
+										"type": "Expression"
+									},
+									"paramFileName": {
+										"value": "@pipeline().parameters.ParamFileName",
+										"type": "Expression"
+									}
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "SanityCheck",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": "BlobValidator",
+							"method": "GET",
+							"headers": {
+								"fileName": {
+									"value": "@pipeline().parameters.FileName",
+									"type": "Expression"
+								},
+								"filePath": {
+									"value": "@pipeline().parameters.FilePath",
+									"type": "Expression"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureFunctionConn",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Sanity Error Mail",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "SanityCheck",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Email Pusher",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EmailTo": "yuhajobs@gmail.com",
+								"Subject": "ADF Pipeline Failed",
+								"ErrorMessage": {
+									"value": "@activity('SanityCheck').Error.Message",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "Raw Hive loading",
+						"type": "HDInsightHive",
+						"dependsOn": [
+							{
+								"activity": "ParamsLookup",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"scriptPath": {
+								"value": "@activity('ParamsLookup').output.value[0].hiveLoc",
+								"type": "Expression"
+							},
+							"defines": {
+								"srcfilelocation": {
+									"value": "@concat(activity('ParamsLookup').output.value[0].hiveSourcePath,'/',pipeline().parameters.FileName)",
+									"type": "Expression"
+								},
+								"loaddate": {
+									"value": "@formatDateTime(utcnow(),'yyyy-MM-dd')",
+									"type": "Expression"
+								}
+							},
+							"scriptLinkedService": {
+								"referenceName": "pharmacypocADLSconn",
+								"type": "LinkedServiceReference"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "HDIClusterconn",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"parameters": {
+					"FileName": {
+						"type": "string"
+					},
+					"FilePath": {
+						"type": "string"
+					},
+					"ParamFilePath": {
+						"type": "string"
+					},
+					"ParamFileName": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}
