@@ -149,7 +149,7 @@
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "HDIClusterconn",
+					"referenceName": "SparkClusterConn",
 					"type": "LinkedServiceReference"
 				}
 			},
