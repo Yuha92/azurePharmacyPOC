@@ -100,9 +100,7 @@
 								"Subject": "@{pipeline().parameters.Subject}",
 								"ErrorMessage": "@{pipeline().parameters.ErrorMessage}",
 								"EmailTo": "@pipeline().parameters.EmailTo"
-							},
-							"linkedServices": [],
-							"datasets": []
+							}
 						}
 					}
 				],
@@ -118,36 +116,6 @@
 					}
 				},
 				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureFunctionConn')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureFunction",
-				"typeProperties": {
-					"functionAppUrl": "https://yuhasanitycheck.azurewebsites.net",
-					"functionKey": {
-						"type": "SecureString",
-						"value": "[parameters('AzureFunctionConn_functionKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/keyvaultPOCconn')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('keyvaultPOCconn_properties_typeProperties_baseUrl')]"
-				}
 			},
 			"dependsOn": []
 		},
@@ -189,6 +157,36 @@
 					}
 				},
 				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureFunctionConn')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureFunction",
+				"typeProperties": {
+					"functionAppUrl": "https://yuhasanitycheck.azurewebsites.net",
+					"functionKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureFunctionConn_functionKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/keyvaultPOCconn')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('keyvaultPOCconn_properties_typeProperties_baseUrl')]"
+				}
 			},
 			"dependsOn": []
 		},
@@ -464,7 +462,7 @@
 									"type": "Expression"
 								},
 								"RawFileName": {
-									"value": "@concat(activity('SanityCheck').output.value[0].containername,'/',activity('SanityCheck').output.value[0].fullFilename)",
+									"value": "@concat(activity('SanityCheck').output.map.containername,'/',activity('SanityCheck').output.map.fullFilename)",
 									"type": "Expression"
 								}
 							}
