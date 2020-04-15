@@ -19,7 +19,8 @@
 					"method": "POST",
 					"body": {
 						"RawFileName": "@{pipeline().parameters.RawFileName}",
-						"TriggerLoc": "@pipeline().parameters.TriggerLoc"
+						"TriggerLoc": "@pipeline().parameters.TriggerLoc",
+						"FileNamePrefix": "@pipeline().parameters.FileNamePrefix"
 					}
 				}
 			}
