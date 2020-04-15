@@ -1,0 +1,29 @@
+{
+	"name": "curationcasestrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Stage2",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"ParamPath": "pharmacypoc/params/curation",
+					"ParamName": "cases_params.csv"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/pharmacypoc/blobs/triggers/stage2",
+			"blobPathEndsWith": "cases.csv",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

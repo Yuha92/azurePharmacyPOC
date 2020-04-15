@@ -34,6 +34,14 @@
 				}
 			}
 		],
+		"parameters": {
+			"ParamPath": {
+				"type": "string"
+			},
+			"ParamName": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }
