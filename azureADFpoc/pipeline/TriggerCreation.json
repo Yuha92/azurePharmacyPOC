@@ -31,6 +31,9 @@
 			},
 			"RawFileName": {
 				"type": "string"
+			},
+			"FileNamePrefix": {
+				"type": "string"
 			}
 		},
 		"annotations": []
