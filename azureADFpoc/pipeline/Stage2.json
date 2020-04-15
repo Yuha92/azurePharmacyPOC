@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"rootPath": "pharmacypoc/jars",
+					"rootPath": "jars",
 					"entryFilePath": "sample-1.0-SNAPSHOT-yuha.jar",
 					"arguments": [
 						"abfss://pharmacypoc@yuhaadlspoc.dfs.core.windows.net/target/raw/cases",
@@ -24,7 +24,7 @@
 					],
 					"className": "com.prad.legend.blooper",
 					"sparkJobLinkedService": {
-						"referenceName": "pharmacypocADLSconn",
+						"referenceName": "pharmacypocblobconn",
 						"type": "LinkedServiceReference"
 					}
 				},
