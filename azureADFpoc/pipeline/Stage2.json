@@ -20,7 +20,7 @@
 					"arguments": [
 						"abfss://pharmacypoc@yuhaadlspoc.dfs.core.windows.net/target/raw/cases",
 						"abfss://pharmacypoc@yuhaadlspoc.dfs.core.windows.net/target/curation/cases",
-						"load_date=2020-04-20"
+						"load_date=2020-04-14"
 					],
 					"className": "com.prad.legend.blooper",
 					"sparkJobLinkedService": {
