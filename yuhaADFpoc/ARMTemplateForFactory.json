@@ -328,7 +328,7 @@
 									"type": "Expression"
 								},
 								"FileNamePrefix": {
-									"value": "@split(activity('SanityCheck').output.map.fullFilename,'/')[-1]",
+									"value": "@first(split(last(split(activity('SanityCheck').output.map.fullFilename,'/')),'.'))",
 									"type": "Expression"
 								}
 							}
