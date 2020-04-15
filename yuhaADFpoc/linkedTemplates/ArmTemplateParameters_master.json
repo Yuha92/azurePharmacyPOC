@@ -59,6 +59,15 @@
 		"deathsTrigger_properties_typeProperties_scope": {
 			"value": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
 		},
+		"curationcasestrigger_properties_Stage2_parameters_ParamPath": {
+			"value": "pharmacypoc/params/curation"
+		},
+		"curationcasestrigger_properties_Stage2_parameters_ParamName": {
+			"value": "cases_params.csv"
+		},
+		"curationcasestrigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
+		},
 		"containerUri": {
 			"value": ""
 		},

@@ -78,6 +78,18 @@
 		"deathsTrigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
+		},
+		"curationcasestrigger_properties_Stage2_parameters_ParamPath": {
+			"type": "string",
+			"defaultValue": "pharmacypoc/params/curation"
+		},
+		"curationcasestrigger_properties_Stage2_parameters_ParamName": {
+			"type": "string",
+			"defaultValue": "cases_params.csv"
+		},
+		"curationcasestrigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
 		}
 	},
 	"variables": {
@@ -382,6 +394,14 @@
 						}
 					}
 				],
+				"parameters": {
+					"ParamPath": {
+						"type": "string"
+					},
+					"ParamName": {
+						"type": "string"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -661,6 +681,40 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/curationcasestrigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Stage2",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"ParamPath": "[parameters('curationcasestrigger_properties_Stage2_parameters_ParamPath')]",
+							"ParamName": "[parameters('curationcasestrigger_properties_Stage2_parameters_ParamName')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pharmacypoc/blobs/triggers/stage2",
+					"blobPathEndsWith": "cases.csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('curationcasestrigger_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Stage2')]"
+			]
 		}
 	]
 }
