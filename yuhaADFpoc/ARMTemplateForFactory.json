@@ -711,8 +711,8 @@
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/pharmacypoc/blobs/triggers/stage2",
-					"blobPathEndsWith": "cases.csv",
+					"blobPathBeginsWith": "/pharmacypoc/blobs/triggers/stage2/total_cases",
+					"blobPathEndsWith": ".txt",
 					"ignoreEmptyBlobs": true,
 					"scope": "[parameters('curationcasestrigger_properties_typeProperties_scope')]",
 					"events": [
