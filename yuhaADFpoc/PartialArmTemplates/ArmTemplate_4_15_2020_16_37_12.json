@@ -1,0 +1,114 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "yuhaADFpoc"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Stage2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Curation Loading",
+						"type": "HDInsightSpark",
+						"dependsOn": [
+							{
+								"activity": "ParamsLookup",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"rootPath": "jars",
+							"entryFilePath": "sample-1.0-SNAPSHOT-yuha.jar",
+							"arguments": [
+								"@activity('ParamsLookup').output.value[0].srcPath",
+								"@activity('ParamsLookup').output.value[0].tgtPath",
+								"@concat('load_date=',formatDateTime(utcnow(),'yyyy-MM-dd'))"
+							],
+							"className": "com.prad.legend.blooper",
+							"sparkJobLinkedService": {
+								"referenceName": "pharmacypocblobconn",
+								"type": "LinkedServiceReference"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "SparkClusterConn",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "ParamsLookup",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "ParamsDataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"paramFilePath": {
+										"value": "@pipeline().parameters.ParamPath",
+										"type": "Expression"
+									},
+									"paramFileName": {
+										"value": "@pipeline().parameters.ParamName",
+										"type": "Expression"
+									}
+								}
+							},
+							"firstRowOnly": false
+						}
+					}
+				],
+				"parameters": {
+					"ParamPath": {
+						"type": "string"
+					},
+					"ParamName": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}
