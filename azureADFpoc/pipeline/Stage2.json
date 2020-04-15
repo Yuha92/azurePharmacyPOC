@@ -5,7 +5,14 @@
 			{
 				"name": "Curation Loading",
 				"type": "HDInsightSpark",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "ParamsLookup",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -18,9 +25,9 @@
 					"rootPath": "jars",
 					"entryFilePath": "sample-1.0-SNAPSHOT-yuha.jar",
 					"arguments": [
-						"abfss://pharmacypoc@yuhaadlspoc.dfs.core.windows.net/target/raw/cases",
-						"abfss://pharmacypoc@yuhaadlspoc.dfs.core.windows.net/target/curation/cases",
-						"load_date=2020-04-14"
+						"@activity('ParamsLookup').output.value[0].srcPath",
+						"@activity('ParamsLookup').output.value[0].tgtPath",
+						"@concat('load_date=',formatDateTime(utcnow(),'yyyy-MM-dd'))"
 					],
 					"className": "com.prad.legend.blooper",
 					"sparkJobLinkedService": {
@@ -31,6 +38,47 @@
 				"linkedServiceName": {
 					"referenceName": "SparkClusterConn",
 					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "ParamsLookup",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": false,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "ParamsDataset",
+						"type": "DatasetReference",
+						"parameters": {
+							"paramFilePath": {
+								"value": "@pipeline().parameters.ParamPath",
+								"type": "Expression"
+							},
+							"paramFileName": {
+								"value": "@pipeline().parameters.ParamName",
+								"type": "Expression"
+							}
+						}
+					},
+					"firstRowOnly": false
 				}
 			}
 		],
