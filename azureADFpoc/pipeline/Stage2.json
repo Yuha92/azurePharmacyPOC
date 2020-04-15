@@ -23,9 +23,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"rootPath": "jars",
-					"entryFilePath": "sample-1.0-SNAPSHOT-yuha.jar",
+					"entryFilePath": "azureCuration-1.0-SNAPSHOT.jar",
 					"arguments": [
-						"@activity('ParamsLookup').output.value[0].srcPath",
+						"@activity('ParamsLookup').output.value[0].srcTbl",
+						"@activity('ParamsLookup').output.value[0].tgtTbl",
 						"@activity('ParamsLookup').output.value[0].tgtPath",
 						"@concat('load_date=',formatDateTime(utcnow(),'yyyy-MM-dd'))"
 					],
