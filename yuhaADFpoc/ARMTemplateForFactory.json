@@ -437,7 +437,8 @@
 							"headers": {},
 							"body": {
 								"RawFileName": "@{pipeline().parameters.RawFileName}",
-								"TriggerLoc": "@pipeline().parameters.TriggerLoc"
+								"TriggerLoc": "@pipeline().parameters.TriggerLoc",
+								"FileNamePrefix": "@pipeline().parameters.FileNamePrefix"
 							}
 						}
 					}
@@ -447,6 +448,9 @@
 						"type": "string"
 					},
 					"RawFileName": {
+						"type": "string"
+					},
+					"FileNamePrefix": {
 						"type": "string"
 					}
 				},
