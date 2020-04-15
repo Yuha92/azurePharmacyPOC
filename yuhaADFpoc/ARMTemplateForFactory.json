@@ -59,6 +59,18 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
 		},
+		"curationcasestrigger_properties_Stage2_parameters_ParamPath": {
+			"type": "string",
+			"defaultValue": "pharmacypoc/params/curation"
+		},
+		"curationcasestrigger_properties_Stage2_parameters_ParamName": {
+			"type": "string",
+			"defaultValue": "cases_params.csv"
+		},
+		"curationcasestrigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
+		},
 		"deathsTrigger_properties_Stage1_parameters_FileName": {
 			"type": "string",
 			"defaultValue": "@triggerBody().fileName"
@@ -76,18 +88,6 @@
 			"defaultValue": "deaths_params.csv"
 		},
 		"deathsTrigger_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
-		},
-		"curationcasestrigger_properties_Stage2_parameters_ParamPath": {
-			"type": "string",
-			"defaultValue": "pharmacypoc/params/curation"
-		},
-		"curationcasestrigger_properties_Stage2_parameters_ParamName": {
-			"type": "string",
-			"defaultValue": "cases_params.csv"
-		},
-		"curationcasestrigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
 		}
@@ -387,9 +387,10 @@
 						"userProperties": [],
 						"typeProperties": {
 							"rootPath": "jars",
-							"entryFilePath": "sample-1.0-SNAPSHOT-yuha.jar",
+							"entryFilePath": "azureCuration-1.0-SNAPSHOT.jar",
 							"arguments": [
-								"@activity('ParamsLookup').output.value[0].srcPath",
+								"@activity('ParamsLookup').output.value[0].srcTbl",
+								"@activity('ParamsLookup').output.value[0].tgtTbl",
 								"@activity('ParamsLookup').output.value[0].tgtPath",
 								"@concat('load_date=',formatDateTime(utcnow(),'yyyy-MM-dd'))"
 							],
@@ -655,6 +656,19 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/pharmacypocblobconn')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('pharmacypocblobconn_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/casesTrigger')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -691,6 +705,40 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/curationcasestrigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Stage2",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"ParamPath": "[parameters('curationcasestrigger_properties_Stage2_parameters_ParamPath')]",
+							"ParamName": "[parameters('curationcasestrigger_properties_Stage2_parameters_ParamName')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/pharmacypoc/blobs/triggers/stage2/total_cases",
+					"blobPathEndsWith": ".txt",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('curationcasestrigger_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Stage2')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/deathsTrigger')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -724,53 +772,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/Stage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pharmacypocblobconn')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('pharmacypocblobconn_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/curationcasestrigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "Stage2",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"ParamPath": "[parameters('curationcasestrigger_properties_Stage2_parameters_ParamPath')]",
-							"ParamName": "[parameters('curationcasestrigger_properties_Stage2_parameters_ParamName')]"
-						}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/pharmacypoc/blobs/triggers/stage2/total_cases",
-					"blobPathEndsWith": ".txt",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('curationcasestrigger_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Stage2')]"
 			]
 		}
 	]

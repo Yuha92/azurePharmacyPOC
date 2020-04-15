@@ -59,6 +59,18 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
 		},
+		"curationcasestrigger_properties_Stage2_parameters_ParamPath": {
+			"type": "string",
+			"defaultValue": "pharmacypoc/params/curation"
+		},
+		"curationcasestrigger_properties_Stage2_parameters_ParamName": {
+			"type": "string",
+			"defaultValue": "cases_params.csv"
+		},
+		"curationcasestrigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
+		},
 		"deathsTrigger_properties_Stage1_parameters_FileName": {
 			"type": "string",
 			"defaultValue": "@triggerBody().fileName"
@@ -76,18 +88,6 @@
 			"defaultValue": "deaths_params.csv"
 		},
 		"deathsTrigger_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
-		},
-		"curationcasestrigger_properties_Stage2_parameters_ParamPath": {
-			"type": "string",
-			"defaultValue": "pharmacypoc/params/curation"
-		},
-		"curationcasestrigger_properties_Stage2_parameters_ParamName": {
-			"type": "string",
-			"defaultValue": "cases_params.csv"
-		},
-		"curationcasestrigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
 		},
@@ -157,6 +157,15 @@
 					"casesTrigger_properties_typeProperties_scope": {
 						"value": "[parameters('casesTrigger_properties_typeProperties_scope')]"
 					},
+					"curationcasestrigger_properties_Stage2_parameters_ParamPath": {
+						"value": "[parameters('curationcasestrigger_properties_Stage2_parameters_ParamPath')]"
+					},
+					"curationcasestrigger_properties_Stage2_parameters_ParamName": {
+						"value": "[parameters('curationcasestrigger_properties_Stage2_parameters_ParamName')]"
+					},
+					"curationcasestrigger_properties_typeProperties_scope": {
+						"value": "[parameters('curationcasestrigger_properties_typeProperties_scope')]"
+					},
 					"deathsTrigger_properties_Stage1_parameters_FileName": {
 						"value": "[parameters('deathsTrigger_properties_Stage1_parameters_FileName')]"
 					},
@@ -171,15 +180,6 @@
 					},
 					"deathsTrigger_properties_typeProperties_scope": {
 						"value": "[parameters('deathsTrigger_properties_typeProperties_scope')]"
-					},
-					"curationcasestrigger_properties_Stage2_parameters_ParamPath": {
-						"value": "[parameters('curationcasestrigger_properties_Stage2_parameters_ParamPath')]"
-					},
-					"curationcasestrigger_properties_Stage2_parameters_ParamName": {
-						"value": "[parameters('curationcasestrigger_properties_Stage2_parameters_ParamName')]"
-					},
-					"curationcasestrigger_properties_typeProperties_scope": {
-						"value": "[parameters('curationcasestrigger_properties_typeProperties_scope')]"
 					}
 				}
 			},
