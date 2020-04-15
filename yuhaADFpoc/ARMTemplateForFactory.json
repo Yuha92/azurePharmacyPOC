@@ -19,7 +19,15 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'SparkClusterConn'"
 		},
+		"pharmacypocblobconn_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'pharmacypocblobconn'"
+		},
 		"HDIClusterconn_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
+		"SparkClusterConn_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "admin"
 		},
@@ -41,7 +49,7 @@
 		},
 		"casesTrigger_properties_Stage1_parameters_ParamFilePath": {
 			"type": "string",
-			"defaultValue": "pharmacypoc/params"
+			"defaultValue": "pharmacypoc/params/raw"
 		},
 		"casesTrigger_properties_Stage1_parameters_ParamFileName": {
 			"type": "string",
@@ -61,7 +69,7 @@
 		},
 		"deathsTrigger_properties_Stage1_parameters_ParamFilePath": {
 			"type": "string",
-			"defaultValue": "pharmacypoc/params"
+			"defaultValue": "pharmacypoc/params/raw"
 		},
 		"deathsTrigger_properties_Stage1_parameters_ParamFileName": {
 			"type": "string",
@@ -70,10 +78,6 @@
 		"deathsTrigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
-		},
-		"SparkClusterConn_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "admin"
 		}
 	},
 	"variables": {
@@ -341,6 +345,51 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Stage2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Curation Loading",
+						"type": "HDInsightSpark",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"rootPath": "jars",
+							"entryFilePath": "sample-1.0-SNAPSHOT-yuha.jar",
+							"arguments": [
+								"abfss://pharmacypoc@yuhaadlspoc.dfs.core.windows.net/target/raw/cases",
+								"abfss://pharmacypoc@yuhaadlspoc.dfs.core.windows.net/target/curation/cases",
+								"load_date=2020-04-14"
+							],
+							"className": "com.prad.legend.blooper",
+							"sparkJobLinkedService": {
+								"referenceName": "pharmacypocblobconn",
+								"type": "LinkedServiceReference"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "SparkClusterConn",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/pharmacypocblobconn')]",
+				"[concat(variables('factoryId'), '/linkedServices/SparkClusterConn')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/TriggerCreation')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -467,6 +516,32 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SparkClusterConn')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HDInsight",
+				"typeProperties": {
+					"clusterUri": "https://pradeepsparkcluster.azurehdinsight.net",
+					"userName": "[parameters('SparkClusterConn_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('SparkClusterConn_password')]"
+					},
+					"isEspEnabled": false,
+					"fileSystem": "clusterlogs",
+					"linkedServiceName": {
+						"referenceName": "pharmacypocADLSconn",
+						"type": "LinkedServiceReference"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/pharmacypocADLSconn')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/keyvaultPOCconn')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -575,30 +650,17 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SparkClusterConn')]",
+			"name": "[concat(parameters('factoryName'), '/pharmacypocblobconn')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"type": "HDInsight",
+				"type": "AzureBlobStorage",
 				"typeProperties": {
-					"clusterUri": "https://pradeepsparkcluster.azurehdinsight.net",
-					"userName": "[parameters('SparkClusterConn_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('SparkClusterConn_password')]"
-					},
-					"isEspEnabled": false,
-					"fileSystem": "clusterlogs",
-					"linkedServiceName": {
-						"referenceName": "pharmacypocADLSconn",
-						"type": "LinkedServiceReference"
-					}
+					"connectionString": "[parameters('pharmacypocblobconn_connectionString')]"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/pharmacypocADLSconn')]"
-			]
+			"dependsOn": []
 		}
 	]
 }

@@ -14,7 +14,13 @@
 		"SparkClusterConn_password": {
 			"value": ""
 		},
+		"pharmacypocblobconn_connectionString": {
+			"value": ""
+		},
 		"HDIClusterconn_properties_typeProperties_userName": {
+			"value": "admin"
+		},
+		"SparkClusterConn_properties_typeProperties_userName": {
 			"value": "admin"
 		},
 		"keyvaultPOCconn_properties_typeProperties_baseUrl": {
@@ -30,7 +36,7 @@
 			"value": "@triggerBody().folderPath"
 		},
 		"casesTrigger_properties_Stage1_parameters_ParamFilePath": {
-			"value": "pharmacypoc/params"
+			"value": "pharmacypoc/params/raw"
 		},
 		"casesTrigger_properties_Stage1_parameters_ParamFileName": {
 			"value": "cases_params.csv"
@@ -45,16 +51,13 @@
 			"value": "@triggerBody().folderPath"
 		},
 		"deathsTrigger_properties_Stage1_parameters_ParamFilePath": {
-			"value": "pharmacypoc/params"
+			"value": "pharmacypoc/params/raw"
 		},
 		"deathsTrigger_properties_Stage1_parameters_ParamFileName": {
 			"value": "deaths_params.csv"
 		},
 		"deathsTrigger_properties_typeProperties_scope": {
 			"value": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
-		},
-		"SparkClusterConn_properties_typeProperties_userName": {
-			"value": "admin"
 		},
 		"containerUri": {
 			"value": ""

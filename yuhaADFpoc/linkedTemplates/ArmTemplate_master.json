@@ -19,7 +19,15 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'SparkClusterConn'"
 		},
+		"pharmacypocblobconn_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'pharmacypocblobconn'"
+		},
 		"HDIClusterconn_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
+		"SparkClusterConn_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "admin"
 		},
@@ -41,7 +49,7 @@
 		},
 		"casesTrigger_properties_Stage1_parameters_ParamFilePath": {
 			"type": "string",
-			"defaultValue": "pharmacypoc/params"
+			"defaultValue": "pharmacypoc/params/raw"
 		},
 		"casesTrigger_properties_Stage1_parameters_ParamFileName": {
 			"type": "string",
@@ -61,7 +69,7 @@
 		},
 		"deathsTrigger_properties_Stage1_parameters_ParamFilePath": {
 			"type": "string",
-			"defaultValue": "pharmacypoc/params"
+			"defaultValue": "pharmacypoc/params/raw"
 		},
 		"deathsTrigger_properties_Stage1_parameters_ParamFileName": {
 			"type": "string",
@@ -70,10 +78,6 @@
 		"deathsTrigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
-		},
-		"SparkClusterConn_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "admin"
 		},
 		"containerUri": {
 			"type": "string",
@@ -104,6 +108,9 @@
 					},
 					"AzureFunctionConn_functionKey": {
 						"value": "[parameters('AzureFunctionConn_functionKey')]"
+					},
+					"pharmacypocblobconn_connectionString": {
+						"value": "[parameters('pharmacypocblobconn_connectionString')]"
 					},
 					"HDIClusterconn_password": {
 						"value": "[parameters('HDIClusterconn_password')]"
