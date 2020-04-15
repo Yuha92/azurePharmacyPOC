@@ -13,12 +13,6 @@
 					"ParamPath": "pharmacypoc/params/curation",
 					"ParamName": "cases_params.csv"
 				}
-			},
-			{
-				"pipelineReference": {
-					"referenceName": "TriggerCreation",
-					"type": "PipelineReference"
-				}
 			}
 		],
 		"type": "BlobEventsTrigger",
