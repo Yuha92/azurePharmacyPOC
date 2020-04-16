@@ -25,10 +25,19 @@
 			"TriggerLoc": {
 				"type": "string"
 			},
-			"RawFileName": {
+			"FileNamePrefix": {
 				"type": "string"
 			},
-			"FileNamePrefix": {
+			"SourcePath": {
+				"type": "string"
+			},
+			"TargetPath": {
+				"type": "string"
+			},
+			"SourceTable": {
+				"type": "string"
+			},
+			"TargetTable": {
 				"type": "string"
 			}
 		},
