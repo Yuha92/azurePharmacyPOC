@@ -176,12 +176,24 @@
 							"value": "@activity('ParamsLookup').output.value[0].triggerLoc",
 							"type": "Expression"
 						},
-						"RawFileName": {
-							"value": "@concat(activity('SanityCheck').output.map.containername,'/',activity('SanityCheck').output.map.fullFilename)",
-							"type": "Expression"
-						},
 						"FileNamePrefix": {
 							"value": "@first(split(last(split(activity('SanityCheck').output.map.fullFilename,'/')),'.'))",
+							"type": "Expression"
+						},
+						"SourcePath": {
+							"value": "@activity('ParamsLookup').output.value[0].srcPath",
+							"type": "Expression"
+						},
+						"TargetPath": {
+							"value": "@activity('ParamsLookup').output.value[0].tgtPath",
+							"type": "Expression"
+						},
+						"SourceTable": {
+							"value": "@activity('ParamsLookup').output.value[0].srcTbl",
+							"type": "Expression"
+						},
+						"TargetTable": {
+							"value": "@activity('ParamsLookup').output.value[0].tgtTbl",
 							"type": "Expression"
 						}
 					}
