@@ -256,6 +256,7 @@
 				}
 			}
 		],
+		"concurrency": 1,
 		"parameters": {
 			"FileName": {
 				"type": "string"
