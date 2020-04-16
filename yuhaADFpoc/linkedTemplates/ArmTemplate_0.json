@@ -749,7 +749,7 @@
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/pharmacypoc/blobs/triggers/stage2/total_cases",
+					"blobPathBeginsWith": "/pharmacypoc/blobs/triggers/stage2",
 					"blobPathEndsWith": ".csv",
 					"ignoreEmptyBlobs": true,
 					"scope": "[parameters('curationtrigger_properties_typeProperties_scope')]",
