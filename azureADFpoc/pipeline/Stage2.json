@@ -81,6 +81,34 @@
 					},
 					"firstRowOnly": false
 				}
+			},
+			{
+				"name": "Stage 2 Success Mail",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Curation Loading",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email Pusher",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"EmailTo": "yuhajobs@gmail.com",
+						"Subject": "Stage 2 Success",
+						"ErrorMessage": {
+							"value": "@pipeline().TriggerName",
+							"type": "Expression"
+						}
+					}
+				}
 			}
 		],
 		"parameters": {
