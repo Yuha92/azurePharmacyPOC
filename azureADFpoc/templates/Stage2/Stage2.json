@@ -1,0 +1,240 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name"
+		},
+		"pharmacypocblobconn": {
+			"type": "string"
+		},
+		"SparkClusterConn": {
+			"type": "string"
+		},
+		"pharmacypocADLSconn": {
+			"type": "string"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Stage2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Curation Loading",
+						"type": "HDInsightSpark",
+						"dependsOn": [
+							{
+								"activity": "ParamsLookup",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"rootPath": "jars",
+							"entryFilePath": "azureCuration-1.0-SNAPSHOT.jar",
+							"arguments": [
+								"@activity('ParamsLookup').output.value[0].srcTbl",
+								"@activity('ParamsLookup').output.value[0].tgtTbl",
+								"@activity('ParamsLookup').output.value[0].tgtPath",
+								"@formatDateTime(utcnow(),'yyyy-MM-dd')"
+							],
+							"className": "com.prad.legend.blooper",
+							"sparkJobLinkedService": {
+								"referenceName": "[parameters('pharmacypocblobconn')]",
+								"type": "LinkedServiceReference"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "[parameters('SparkClusterConn')]",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "ParamsLookup",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "ParamsDataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"paramFilePath": {
+										"value": "@pipeline().parameters.ParamPath",
+										"type": "Expression"
+									},
+									"paramFileName": {
+										"value": "@pipeline().parameters.ParamName",
+										"type": "Expression"
+									}
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "Stage 2 Success Mail",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Curation Loading",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Email Pusher",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EmailTo": "yuhajobs@gmail.com",
+								"Subject": "Stage 2 Success",
+								"ErrorMessage": {
+									"value": "@pipeline().TriggerName",
+									"type": "Expression"
+								}
+							}
+						}
+					}
+				],
+				"parameters": {
+					"ParamPath": {
+						"type": "string"
+					},
+					"ParamName": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ParamsDataset')]",
+				"[concat(variables('factoryId'), '/pipelines/Email Pusher')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParamsDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('pharmacypocADLSconn')]",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"paramFilePath": {
+						"type": "string"
+					},
+					"paramFileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().paramFileName",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().paramFilePath",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Email Pusher')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Send Mail",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-09.southeastasia.logic.azure.com:443/workflows/97ec2177ca3b49e39ad8cd1cfdf3c9cd/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AnvYfNw5jDJsCzFMJ4ICfVb4iOM_rxWH1QS8ufxkHjc",
+							"method": "POST",
+							"body": {
+								"DataFactoryName": "@{pipeline().DataFactory}",
+								"PipelineName": "@{pipeline().Pipeline}",
+								"Subject": "@{pipeline().parameters.Subject}",
+								"ErrorMessage": "@{pipeline().parameters.ErrorMessage}",
+								"EmailTo": "@pipeline().parameters.EmailTo"
+							}
+						}
+					}
+				],
+				"parameters": {
+					"EmailTo": {
+						"type": "string"
+					},
+					"Subject": {
+						"type": "string"
+					},
+					"ErrorMessage": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}
