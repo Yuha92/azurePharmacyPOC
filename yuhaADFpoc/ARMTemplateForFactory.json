@@ -248,7 +248,7 @@
 							"waitOnCompletion": true,
 							"parameters": {
 								"EmailTo": "yuhajobs@gmail.com",
-								"Subject": "ADF Pipeline Failed",
+								"Subject": "Stage 1 Sanity Failed",
 								"ErrorMessage": {
 									"value": "@activity('SanityCheck').Error.Message",
 									"type": "Expression"
@@ -341,6 +341,62 @@
 								},
 								"TargetTable": {
 									"value": "@activity('ParamsLookup').output.value[0].tgtTbl",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "Stage 1 Success Mail",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Trigger Creation",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Email Pusher",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EmailTo": "yuhajobs@gmail.com",
+								"Subject": "Stage 1 Success",
+								"ErrorMessage": {
+									"value": "@pipeline().TriggerName",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "Stage 1 Failed Mail",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Trigger Creation",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Email Pusher",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EmailTo": "yuhajobs@gmail.com",
+								"Subject": "Stage 1 Failed",
+								"ErrorMessage": {
+									"value": "@activity('Raw Hive loading').Error.Message",
 									"type": "Expression"
 								}
 							}
@@ -457,6 +513,34 @@
 							},
 							"firstRowOnly": false
 						}
+					},
+					{
+						"name": "Stage 2 Success Mail",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Curation Loading",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Email Pusher",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EmailTo": "yuhajobs@gmail.com",
+								"Subject": "Stage 2 Success",
+								"ErrorMessage": {
+									"value": "@pipeline().TriggerName",
+									"type": "Expression"
+								}
+							}
+						}
 					}
 				],
 				"parameters": {
@@ -472,7 +556,8 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/pharmacypocblobconn')]",
 				"[concat(variables('factoryId'), '/linkedServices/SparkClusterConn')]",
-				"[concat(variables('factoryId'), '/datasets/ParamsDataset')]"
+				"[concat(variables('factoryId'), '/datasets/ParamsDataset')]",
+				"[concat(variables('factoryId'), '/pipelines/Email Pusher')]"
 			]
 		},
 		{
