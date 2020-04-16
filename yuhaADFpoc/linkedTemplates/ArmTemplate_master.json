@@ -49,7 +49,7 @@
 		},
 		"casesTrigger_properties_Stage1_parameters_ParamFilePath": {
 			"type": "string",
-			"defaultValue": "pharmacypoc/params/raw"
+			"defaultValue": "pharmacypoc/params"
 		},
 		"casesTrigger_properties_Stage1_parameters_ParamFileName": {
 			"type": "string",
@@ -81,7 +81,7 @@
 		},
 		"deathsTrigger_properties_Stage1_parameters_ParamFilePath": {
 			"type": "string",
-			"defaultValue": "pharmacypoc/params/raw"
+			"defaultValue": "pharmacypoc/params"
 		},
 		"deathsTrigger_properties_Stage1_parameters_ParamFileName": {
 			"type": "string",

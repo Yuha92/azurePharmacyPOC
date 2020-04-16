@@ -36,7 +36,7 @@
 			"value": "@triggerBody().folderPath"
 		},
 		"casesTrigger_properties_Stage1_parameters_ParamFilePath": {
-			"value": "pharmacypoc/params/raw"
+			"value": "pharmacypoc/params"
 		},
 		"casesTrigger_properties_Stage1_parameters_ParamFileName": {
 			"value": "cases_params.csv"
@@ -60,7 +60,7 @@
 			"value": "@triggerBody().folderPath"
 		},
 		"deathsTrigger_properties_Stage1_parameters_ParamFilePath": {
-			"value": "pharmacypoc/params/raw"
+			"value": "pharmacypoc/params"
 		},
 		"deathsTrigger_properties_Stage1_parameters_ParamFileName": {
 			"value": "deaths_params.csv"
