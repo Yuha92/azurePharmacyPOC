@@ -44,13 +44,13 @@
 		"casesTrigger_properties_typeProperties_scope": {
 			"value": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
 		},
-		"curationcasestrigger_properties_Stage2_parameters_ParamPath": {
-			"value": "pharmacypoc/params/curation"
+		"curationtrigger_properties_Stage2_parameters_ParamPath": {
+			"value": "@triggerBody().folderPath"
 		},
-		"curationcasestrigger_properties_Stage2_parameters_ParamName": {
-			"value": "cases_params.csv"
+		"curationtrigger_properties_Stage2_parameters_ParamName": {
+			"value": "@triggerBody().fileName"
 		},
-		"curationcasestrigger_properties_typeProperties_scope": {
+		"curationtrigger_properties_typeProperties_scope": {
 			"value": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
 		},
 		"deathsTrigger_properties_Stage1_parameters_FileName": {

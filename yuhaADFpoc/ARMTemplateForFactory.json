@@ -59,15 +59,15 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
 		},
-		"curationcasestrigger_properties_Stage2_parameters_ParamPath": {
+		"curationtrigger_properties_Stage2_parameters_ParamPath": {
 			"type": "string",
-			"defaultValue": "pharmacypoc/params/curation"
+			"defaultValue": "@triggerBody().folderPath"
 		},
-		"curationcasestrigger_properties_Stage2_parameters_ParamName": {
+		"curationtrigger_properties_Stage2_parameters_ParamName": {
 			"type": "string",
-			"defaultValue": "cases_params.csv"
+			"defaultValue": "@triggerBody().fileName"
 		},
-		"curationcasestrigger_properties_typeProperties_scope": {
+		"curationtrigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4252b742-3cd4-47a1-af43-30bb66d77529/resourceGroups/yuhaPOC/providers/Microsoft.Storage/storageAccounts/yuhaadlspoc"
 		},
@@ -722,7 +722,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/curationcasestrigger')]",
+			"name": "[concat(parameters('factoryName'), '/curationtrigger')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -735,17 +735,17 @@
 							"type": "PipelineReference"
 						},
 						"parameters": {
-							"ParamPath": "[parameters('curationcasestrigger_properties_Stage2_parameters_ParamPath')]",
-							"ParamName": "[parameters('curationcasestrigger_properties_Stage2_parameters_ParamName')]"
+							"ParamPath": "[parameters('curationtrigger_properties_Stage2_parameters_ParamPath')]",
+							"ParamName": "[parameters('curationtrigger_properties_Stage2_parameters_ParamName')]"
 						}
 					}
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
 					"blobPathBeginsWith": "/pharmacypoc/blobs/triggers/stage2/total_cases",
-					"blobPathEndsWith": ".txt",
+					"blobPathEndsWith": ".csv",
 					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('curationcasestrigger_properties_typeProperties_scope')]",
+					"scope": "[parameters('curationtrigger_properties_typeProperties_scope')]",
 					"events": [
 						"Microsoft.Storage.BlobCreated"
 					]
