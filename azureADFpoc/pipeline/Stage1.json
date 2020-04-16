@@ -181,11 +181,11 @@
 							"type": "Expression"
 						},
 						"SourcePath": {
-							"value": "@activity('ParamsLookup').output.value[0].srcPath",
+							"value": "@activity('ParamsLookup').output.value[0].curationSrcPath",
 							"type": "Expression"
 						},
 						"TargetPath": {
-							"value": "@activity('ParamsLookup').output.value[0].tgtPath",
+							"value": "@activity('ParamsLookup').output.value[0].curationDestPath",
 							"type": "Expression"
 						},
 						"SourceTable": {
