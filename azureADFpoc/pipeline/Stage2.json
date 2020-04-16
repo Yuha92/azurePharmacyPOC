@@ -111,7 +111,6 @@
 				}
 			}
 		],
-		"concurrency": 1,
 		"parameters": {
 			"ParamPath": {
 				"type": "string"
