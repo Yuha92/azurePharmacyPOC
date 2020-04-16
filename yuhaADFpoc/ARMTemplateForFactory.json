@@ -800,7 +800,7 @@
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/pharmacypoc/blobs/source/cases",
+					"blobPathBeginsWith": "/pharmacypoc/blobs/source/total_cases",
 					"blobPathEndsWith": ".csv",
 					"ignoreEmptyBlobs": true,
 					"scope": "[parameters('casesTrigger_properties_typeProperties_scope')]",
@@ -870,7 +870,7 @@
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/pharmacypoc/blobs/source/deaths",
+					"blobPathBeginsWith": "/pharmacypoc/blobs/source/total_deaths",
 					"blobPathEndsWith": ".csv",
 					"ignoreEmptyBlobs": true,
 					"scope": "[parameters('deathsTrigger_properties_typeProperties_scope')]",
