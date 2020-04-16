@@ -12,7 +12,7 @@
 				"parameters": {
 					"FileName": "@triggerBody().fileName",
 					"FilePath": "@triggerBody().folderPath",
-					"ParamFilePath": "pharmacypoc/params/raw",
+					"ParamFilePath": "pharmacypoc/params",
 					"ParamFileName": "deaths_params.csv"
 				}
 			}
