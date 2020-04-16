@@ -620,6 +620,7 @@
 						}
 					}
 				],
+				"concurrency": 1,
 				"parameters": {
 					"FileName": {
 						"type": "string"
@@ -760,6 +761,7 @@
 						}
 					}
 				],
+				"concurrency": 1,
 				"parameters": {
 					"ParamPath": {
 						"type": "string"
